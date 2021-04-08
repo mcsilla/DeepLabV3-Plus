@@ -29,7 +29,7 @@ class Trainer:
         self.train_data_length = len(train_dataloader)
         print('[+] Data points in train dataset: {}'.format(
             self.train_data_length))
-        self.train_dataset = train_dataloader.get_dataset()
+        self.train_dataset = train_dataloader.get_dataset_2()
         print('Train Dataset:', self.train_dataset)
 
         # Validation Dataset
@@ -38,7 +38,7 @@ class Trainer:
         self.val_data_length = len(val_dataloader)
         print('Data points in train dataset: {}'.format(
             self.val_data_length))
-        self.val_dataset = val_dataloader.get_dataset()
+        self.val_dataset = val_dataloader.get_dataset_2()
         print('Val Dataset:', self.val_dataset)
 
         self._model = None

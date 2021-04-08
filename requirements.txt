@@ -46,7 +46,7 @@ matplotlib==3.2.1
 mistune==0.8.4
 nbconvert==5.6.1
 nbformat==5.0.6
-netron==4.1.8
+netron
 notebook==6.0.3
 numpy==1.18.4
 nvidia-ml-py3==7.352.0
@@ -86,10 +86,6 @@ shortuuid==1.0.1
 six==1.14.0
 smmap==3.0.4
 subprocess32==3.5.4
-tensorboard==2.2.1
-tensorboard-plugin-wit==1.6.0.post3
-tensorflow==2.2.1
-tensorflow-estimator==2.2.0
 termcolor==1.1.0
 terminado==0.8.3
 testpath==0.4.4

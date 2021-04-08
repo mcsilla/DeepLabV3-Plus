@@ -59,7 +59,7 @@ class DeeplabV3Plus(tf.keras.Model):
         input_layer = tf.keras.Input(shape=input_shape[1:])
 
         backbone_model = BACKBONES[self.backbone]['model'](
-            input_tensor=input_layer, weights='imagenet', include_top=False)
+            input_tensor=input_layer, weights=None, include_top=False)
 
         output_layer = backbone_model.get_layer(
             BACKBONES[self.backbone][feature]).output
