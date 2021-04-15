@@ -26,20 +26,20 @@ class Trainer:
         # Train Dataset
         train_dataloader = GenericDataLoader(self.config[
             'train_dataset_config'])
-        self.train_data_length = len(train_dataloader)
-        print('[+] Data points in train dataset: {}'.format(
-            self.train_data_length))
-        self.train_dataset = train_dataloader.get_dataset_2()
-        print('Train Dataset:', self.train_dataset)
+        # self.train_data_length = len(train_dataloader)
+        # print('[+] Data points in train dataset: {}'.format(
+        #     self.train_data_length))
+        self.train_dataset = train_dataloader.get_dataset()
+        # print('Train Dataset:', self.train_dataset)
 
         # Validation Dataset
         val_dataloader = GenericDataLoader(self.config[
             'val_dataset_config'])
-        self.val_data_length = len(val_dataloader)
-        print('Data points in train dataset: {}'.format(
-            self.val_data_length))
-        self.val_dataset = val_dataloader.get_dataset_2()
-        print('Val Dataset:', self.val_dataset)
+        # self.val_data_length = len(val_dataloader)
+        # print('Data points in train dataset: {}'.format(
+        #     self.val_data_length))
+        self.val_dataset = val_dataloader.get_dataset()
+        # print('Val Dataset:', self.val_dataset)
 
         self._model = None
         self._wandb_initialized = False
@@ -182,11 +182,9 @@ class Trainer:
         history = self.model.fit(
             self.train_dataset, validation_data=self.val_dataset,
 
-            steps_per_epoch=self.train_data_length //
-            self.config['train_dataset_config']['batch_size'],
+            steps_per_epoch=self.config['steps_per_epoch'],
 
-            validation_steps=self.val_data_length //
-            self.config['val_dataset_config']['batch_size'],
+            validation_steps=self.config['validation_steps'],
 
             epochs=self.config['epochs'], callbacks=callbacks
         )

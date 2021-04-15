@@ -18,20 +18,24 @@ CONFIG = {
     'project_name': 'deeplabv3-plus',
     'experiment_name': 'articles-segmentation-resnet-50-backbone',
     'train_dataset_config': {
+        'tf_records': glob('/deeplab/dataset/test_records/articles_deeplab_0000.tfrecord'),
         'images': images[:N],
         'labels': annotations[:N],
-        'height': 512, 'width': 512, 'batch_size': 2
+        'height': 768, 'width': 768, 'batch_size': 1
     },
     'val_dataset_config': {
+        'tf_records': glob('/deeplab/dataset/test_records/articles_deeplab_0000.tfrecord'),
         'images': images[N:],
         'labels': annotations[N:],
-        'height': 512, 'width': 512, 'batch_size': 2
+        'height': 768, 'width': 768, 'batch_size': 1
     },
     'strategy': tf.distribute.OneDeviceStrategy(device="/gpu:0"),
-    'num_classes': 16,
+    'num_classes': 18,
     'backbone': 'resnet50',
-    'learning_rate': 1e-5,
+    'learning_rate': 1e-4,
     'checkpoint_dir': "/checkpoints",
     'checkpoint_file_prefix': "deeplabv3plus_with_resnet50_",
-    'epochs': 1
+    'epochs': 2,
+    'steps_per_epoch': 2000,
+    'validation_steps': 200,
 }
