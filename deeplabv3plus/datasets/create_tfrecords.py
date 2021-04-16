@@ -5,11 +5,12 @@ import tqdm
 import random
 import numpy as np
 import io
+from pathlib import Path
 
 def write_examples_to_tfrecord(examples, record_path):
     random.shuffle(examples)
     with tf.io.TFRecordWriter(record_path) as writer:
-        for example in tqdm.tqdm(examples):
+        for example in examples:
             writer.write(example.SerializeToString())
 
 def bytes_feature(value):
@@ -68,25 +69,41 @@ def create_tf_example(image_path, label_path, width=768, height=768):
     return tf.train.Example(features=tf.train.Features(feature=feature_dict))
 
 if __name__ == '__main__':
-    print('Hello!')
-    images = sorted(glob('/home/csilla/PycharmProjects/arcanum-main/modules/arc/train/vision/articles/sandbox/testimages/*.jpg', recursive=True))
-    labels = sorted(glob('/home/csilla/PycharmProjects/arcanum-main/modules/arc/train/vision/articles/sandbox/testimages/*.png', recursive=True))
-    print(len(images), len(labels))
-    example_cache = []
-    example_idx = 0
-    record_idx = 0
-    for image_path, label_path in tqdm.tqdm(zip(images, labels), total=len(images)):
-        print('Example: ', example_idx)
-        example_cache.append(
-            create_tf_example(image_path, label_path)
-        )
-        example_idx += 1
-        if len(example_cache) >= 100:
-            file_num = '{:d}'.format(record_idx).zfill(4)
-            write_examples_to_tfrecord(example_cache, f'/home/csilla/PycharmProjects/DeepLabV3-Plus-lattice/dataset/test_records/articles_deeplab_{file_num}.tfrecord')
-            record_idx += 1
-            example_cache = []
+    input_prefix = Path('/mnt/noah/dev/csilla/deeplab/article_new')
+    tfrec_prefix = Path('/mnt/noah/dev/csilla/deeplab/tfrecords/')
 
-    if len(example_cache) > 0:
-        file_num = '{:d}'.format(record_idx).zfill(4)
-        write_examples_to_tfrecord(example_cache, f'/home/csilla/PycharmProjects/DeepLabV3-Plus-lattice/dataset/test_records/articles_deeplab_{file_num}.tfrecord')
+    for mode in ['train', 'val']:
+        if mode == 'train':
+            images = sorted([img for img in input_prefix.glob('**/*.jpg') if not str(img.relative_to(input_prefix)).startswith(
+                    ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))])
+            labels = sorted([img for img in input_prefix.glob('**/*.png') if not str(img.relative_to(input_prefix)).startswith(
+                    ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))])
+        else:
+            images = sorted(glob(str(input_prefix/'MagyarNemzet/**/*.jpg'), recursive=True) +
+                            glob(str(input_prefix/'KiadokKronosz/**/*.jpg'), recursive=True) +
+                            glob(str(input_prefix/'VilagIfjusaga/**/*.jpg'), recursive=True))
+            labels = sorted(glob(str(input_prefix/'MagyarNemzet/**/*.png'), recursive=True) +
+                            glob(str(input_prefix/'KiadokKronosz/**/*.png'), recursive=True) +
+                            glob(str(input_prefix/'VilagIfjusaga/**/*.png'), recursive=True))
+        assert len(images) == len(labels)
+        print(f'Number of {mode} images: ', len(images))
+        example_cache = []
+        example_idx = 0
+        record_idx = 0
+        for image_path, label_path in tqdm.tqdm(zip(images, labels), total=len(images)):
+            image_path = str(image_path)
+            label_path = str(label_path)
+            example_cache.append(
+                create_tf_example(image_path, label_path)
+            )
+            example_idx += 1
+            if len(example_cache) >= 1000:
+                file_num = '{:d}'.format(record_idx).zfill(4)
+                write_examples_to_tfrecord(example_cache, str(tfrec_prefix / f'deeplab_{mode}_{file_num}.tfrecord'))
+                record_idx += 1
+                example_cache = []
+
+        if len(example_cache) > 0:
+            file_num = '{:d}'.format(record_idx).zfill(4)
+            write_examples_to_tfrecord(example_cache, str(tfrec_prefix / f'deeplab_{mode}_{file_num}.tfrecord'))
+        print(f"Total number of {mode} examples: ", example_idx)
