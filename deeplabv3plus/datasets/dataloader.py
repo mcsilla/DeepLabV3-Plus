@@ -73,7 +73,7 @@ class GenericDataLoader:
         #     print("AAAA", x)
         #     return x
         dataset = dataset.map(self._parser_fn)
-        # dataset = dataset.shuffle(1000)
+        dataset = dataset.shuffle(1000)
         dataset = dataset.batch(self.configs['batch_size'], drop_remainder=True)
         dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
         return dataset

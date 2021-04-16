@@ -24,12 +24,14 @@ CONFIG = {
         'height': 768, 'width': 768, 'batch_size': 1
     },
     'strategy': 'onedevice',
+    'tpu_name': '',
     'num_classes': 18,
     'backbone': 'resnet50',
     'learning_rate': 1e-4,
     'checkpoint_dir': "/checkpoints",
-    'checkpoint_file_prefix': "deeplabv3plus_articles_",
-    'epochs': 2,
-    'steps_per_epoch': 2000,
-    'validation_steps': 200,
+    'checkpoint_file_prefix': "ckpt_",
+    'log_dir': './logs',
+    'epochs': 4,
+    'steps_per_epoch': 100,
+    'validation_steps': 10,
 }

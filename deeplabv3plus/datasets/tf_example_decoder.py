@@ -49,10 +49,8 @@ class TfExampleDecoder:
         image, label, width, height = self.decode(example)
         image = tf.cast(image, tf.float32) / 127.5 - 1
         label = tf.cast(label, tf.float32)
-        tf.print('SHAPES: ', image.shape, label.shape)
         image = tf.ensure_shape(image, [768, 768, 3])
         label = tf.ensure_shape(label, [768, 768, 1])
-        tf.print('Final SHAPES: ', image.shape, label.shape)
         # label = tf.reshape(label, tf.stack([height, width, tf.constant(1, dtype=tf.int64)], 0))
         # print(tf.executing_eagerly())
         # print('SHAPES_NEW: ', tf.shape(image), tf.shape(label), height, width)

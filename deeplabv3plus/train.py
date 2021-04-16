@@ -43,6 +43,14 @@ class Trainer:
 
         self._model = None
         self._wandb_initialized = False
+        self.initial_epoch = 0
+
+    def continue_running(self):
+        latest_checkpoint = tf.train.latest_checkpoint(self.config['checkpoint_dir'])
+        print('Latest checkpoint: ', latest_checkpoint)
+        if latest_checkpoint is not None:
+            self.initial_epoch = int(latest_checkpoint.split("_")[1])
+        return latest_checkpoint
 
     @property
     def model(self):
@@ -64,6 +72,9 @@ class Trainer:
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(),
                 metrics=['accuracy']
             )
+            latest_ckpt = self.continue_running()
+            if latest_ckpt is not None:
+                self._model.load_weights(latest_ckpt)
 
             return self._model
 
@@ -129,21 +140,21 @@ class Trainer:
         self._wandb_initialized = True
 
     def _get_checkpoint_filename_format(self):
-        if self.config['checkpoint_dir'] == 'wandb://':
-            if 'wandb_api_key' not in self.config:
-                raise ValueError("Invalid configuration, wandb_api_key not "
-                                 "provided!")
-            if not self._wandb_initialized:
-                raise ValueError("Wandb not intialized, "
-                                 "checkpoint_filename_format is unusable.")
-
-            return os.path.join(wandb.run.dir,
-                                self.config['checkpoint_file_prefix'] +
-                                "{epoch}")
+        # if self.config['checkpoint_dir'] == 'wandb://':
+        #     if 'wandb_api_key' not in self.config:
+        #         raise ValueError("Invalid configuration, wandb_api_key not "
+        #                          "provided!")
+        #     if not self._wandb_initialized:
+        #         raise ValueError("Wandb not intialized, "
+        #                          "checkpoint_filename_format is unusable.")
+        #
+        #     return os.path.join(wandb.run.dir,
+        #                         self.config['checkpoint_file_prefix'] +
+        #                         "{epoch}")
 
         return os.path.join(self.config['checkpoint_dir'],
                             self.config['checkpoint_file_prefix'] +
-                            "{epoch}")
+                            "{epoch:04d}")
 
     def _get_logger_callback(self):
         if 'wandb_api_key' not in self.config:
@@ -156,7 +167,7 @@ class Trainer:
                 raise error  # rethrow
 
             print("[-] Defaulting to TensorBoard logging...")
-            return tf.keras.callbacks.TensorBoard()
+            return tf.keras.callbacks.TensorBoard(log_dir=CONFIG['log_dir'], update_freq='batch')
 
     def train(self):
         """Trainer entry point.
@@ -171,9 +182,9 @@ class Trainer:
             tf.keras.callbacks.ModelCheckpoint(
                 filepath=self._get_checkpoint_filename_format(),
                 monitor='val_loss',
-                save_best_only=True,
+                # save_best_only=True,
                 mode='min',
-                save_weights_only=True
+                # save_weights_only=True
             ),
 
             self._get_logger_callback()
@@ -182,16 +193,13 @@ class Trainer:
         history = self.model.fit(
             self.train_dataset, validation_data=self.val_dataset,
 
-            steps_per_epoch=self.config['steps_per_epoch'],
+            # steps_per_epoch=self.config['steps_per_epoch'],
 
             validation_steps=self.config['validation_steps'],
 
             epochs=self.config['epochs'], callbacks=callbacks,
 
-            # initial_epoch=initial_epoch
+            initial_epoch=self.initial_epoch
         )
-
-        # model.fit(dataset, steps_per_epoch=args.steps_per_epoch, epochs=args.epochs,
-        #           callbacks=[checkpoint_callback, tboard_callback], initial_epoch=initial_epoch)
 
         return history
