@@ -33,5 +33,6 @@ CONFIG = {
     'checkpoint_file_prefix': "ckpt_",
     'log_dir': log_dir,
     'epochs': 100,
-    'validation_steps': None,
+    'steps_per_epochs': 91599 // 64,
+    'validation_steps': 7429 // 32,
 }
