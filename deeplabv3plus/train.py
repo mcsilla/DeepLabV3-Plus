@@ -70,7 +70,7 @@ class Trainer:
                     learning_rate=self.config['learning_rate']
                 ),
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-                metrics=['accuracy']
+                # metrics=['accuracy']
             )
             latest_ckpt = self.continue_running()
             if latest_ckpt is not None:
