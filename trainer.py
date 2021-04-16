@@ -43,5 +43,24 @@ If provided, checkpoint_dir is set to wandb://
         CONFIG['wandb_api_key'] = ARGS.wandb_api_key
         CONFIG['checkpoint_dir'] = "wandb://"
 
+    tf.config.set_visible_devices(tf.config.list_physical_devices("GPU")[0:7], "GPU")
+    print('GPU Devices: {}'.format([device.name for device in tf.config.list_physical_devices("GPU")]))
+    print('Phisical Devices: {}'.format([device.name for device in tf.config.list_physical_devices()]))
+    print('Logical Devices: {}'.format([device.name for device in tf.config.list_logical_devices()]))
+    strategy = None
+    if CONFIG['strategy'] == "onedevice":
+        CONFIG['strategy'] = tf.distribute.OneDeviceStrategy(device="/gpu:0")
+    if CONFIG['strategy'] == "mirrored":
+        CONFIG['strategy'] = tf.distribute.MirroredStrategy()
+        print('Number of devices: {}'.format(CONFIG['strategy'].num_replicas_in_sync))
+    if CONFIG['strategy'] == "tpu":
+        resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=CONFIG['tpu_name'])
+        print(f"Connecting to tpu {CONFIG['tpu_name']}...")
+        tf.config.experimental_connect_to_cluster(resolver)
+        print(f"Initializing tpu {CONFIG['tpu_name']}...")
+        tf.tpu.experimental.initialize_tpu_system(resolver)
+        print("All TPU devices: ", tf.config.list_logical_devices('TPU'))
+        CONFIG['strategy'] = tf.distribute.experimental.TPUStrategy(resolver)
+
     TRAINER = Trainer(CONFIG)
     HISTORY = TRAINER.train()

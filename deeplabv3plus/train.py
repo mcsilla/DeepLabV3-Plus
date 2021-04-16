@@ -69,10 +69,10 @@ class Trainer:
 
     @staticmethod
     def _assert_dataset_config(dataset_config):
-        assert 'images' in dataset_config and \
-            isinstance(dataset_config['images'], list)
-        assert 'labels' in dataset_config and \
-            isinstance(dataset_config['labels'], list)
+        # assert 'images' in dataset_config and \
+        #     isinstance(dataset_config['images'], list)
+        # assert 'labels' in dataset_config and \
+        #     isinstance(dataset_config['labels'], list)
 
         assert 'height' in dataset_config and \
             isinstance(dataset_config['height'], int)
@@ -186,7 +186,12 @@ class Trainer:
 
             validation_steps=self.config['validation_steps'],
 
-            epochs=self.config['epochs'], callbacks=callbacks
+            epochs=self.config['epochs'], callbacks=callbacks,
+
+            # initial_epoch=initial_epoch
         )
+
+        # model.fit(dataset, steps_per_epoch=args.steps_per_epoch, epochs=args.epochs,
+        #           callbacks=[checkpoint_callback, tboard_callback], initial_epoch=initial_epoch)
 
         return history
