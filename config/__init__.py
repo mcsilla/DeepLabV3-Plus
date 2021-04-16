@@ -7,8 +7,7 @@ entry in the CONFIG_MAP as shown.
 
 import config.camvid_resnet50
 import config.human_parsing_resnet50
-import config.articles_resnet50
-
+import config.articles_tpu
 CONFIG_MAP = {
     'camvid_resnet50': config.camvid_resnet50.CONFIG,
     'human_parsing_resnet50': config.human_parsing_resnet50.CONFIG,
