@@ -6,7 +6,7 @@
 
 import argparse
 from argparse import RawTextHelpFormatter
-
+import os
 print("[-] Importing tensorflow...")
 import tensorflow as tf  # noqa: E402
 print(f"[+] Done! Tensorflow version: {tf.version.VERSION}")
