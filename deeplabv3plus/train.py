@@ -175,8 +175,25 @@ class Trainer:
         Attempts to connect to wandb before starting training. Runs .fit() on
         loaded model.
         """
-        if not self._wandb_initialized:
-            self.connect_wandb()
+        # if not self._wandb_initialized:
+        #     self.connect_wandb()
+
+        with self.config['strategy'].scope():
+            my_model = DeeplabV3Plus(
+                num_classes=self.config['num_classes'],
+                backbone=self.config['backbone']
+            )
+
+            my_model.compile(
+                optimizer=tf.keras.optimizers.Adam(
+                    learning_rate=self.config['learning_rate']
+                ),
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+                # metrics=['accuracy']
+            )
+            latest_ckpt = self.continue_running()
+            if latest_ckpt is not None:
+                my_model.load_weights(latest_ckpt)
 
         callbacks = [
             tf.keras.callbacks.ModelCheckpoint(
@@ -190,7 +207,7 @@ class Trainer:
             self._get_logger_callback()
         ]
 
-        history = self.model.fit(
+        history = my_model.fit(
             self.train_dataset, validation_data=self.val_dataset,
 
             steps_per_epoch=self.config['steps_per_epoch'],
