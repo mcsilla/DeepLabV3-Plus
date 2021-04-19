@@ -158,7 +158,7 @@ class Trainer:
 
     def _get_logger_callback(self):
         if 'wandb_api_key' not in self.config:
-            return tf.keras.callbacks.TensorBoard()
+            return tf.keras.callbacks.TensorBoard(log_dir=self.config['log_dir'], update_freq='batch')
 
         try:
             return WandbCallback(save_weights_only=True, save_model=False)
@@ -167,7 +167,7 @@ class Trainer:
                 raise error  # rethrow
 
             print("[-] Defaulting to TensorBoard logging...")
-            return tf.keras.callbacks.TensorBoard(log_dir=CONFIG['log_dir'], update_freq='batch')
+            return tf.keras.callbacks.TensorBoard(log_dir=self.config['log_dir'], update_freq='batch')
 
     def train(self):
         """Trainer entry point.
