@@ -54,13 +54,21 @@ If provided, checkpoint_dir is set to wandb://
         CONFIG['strategy'] = tf.distribute.MirroredStrategy()
         print('Number of devices: {}'.format(CONFIG['strategy'].num_replicas_in_sync))
     if CONFIG['strategy'] == "tpu":
-        resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=CONFIG['tpu_name'])
-        print(f"Connecting to tpu {CONFIG['tpu_name']}...")
-        tf.config.experimental_connect_to_cluster(resolver)
-        print(f"Initializing tpu {CONFIG['tpu_name']}...")
-        tf.tpu.experimental.initialize_tpu_system(resolver)
-        print("All TPU devices: ", tf.config.list_logical_devices('TPU'))
-        CONFIG['strategy'] = tf.distribute.experimental.TPUStrategy(resolver)
+        if CONFIG['mode'] == 'colab':
+            # Get a handle to the attached TPU. On GCP it will be the CloudTPU itself
+            resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=’grpc: // ’ + os.environ[‘COLAB_TPU_ADDR’])
+            # Connect to the TPU handle and initialise it
+            tf.config.experimental_connect_to_cluster(resolver)
+            tf.tpu.experimental.initialize_tpu_system(resolver)
+            CONFIG['strategy'] = tf.distribute.experimental.TPUStrategy(resolver)
+        if CONFIG['mode'] == 'gcp':
+            resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=CONFIG['tpu_name'])
+            print(f"Connecting to tpu {CONFIG['tpu_name']}...")
+            tf.config.experimental_connect_to_cluster(resolver)
+            print(f"Initializing tpu {CONFIG['tpu_name']}...")
+            tf.tpu.experimental.initialize_tpu_system(resolver)
+            print("All TPU devices: ", tf.config.list_logical_devices('TPU'))
+            CONFIG['strategy'] = tf.distribute.experimental.TPUStrategy(resolver)
 
     TRAINER = Trainer(CONFIG)
     HISTORY = TRAINER.train()

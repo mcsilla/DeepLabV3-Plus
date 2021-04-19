@@ -25,7 +25,7 @@ CONFIG = {
         'height': 768, 'width': 768, 'batch_size': 1
     },
     'strategy': 'tpu',
-    'tpu_name': 'deeplab-articles',
+    'mode': 'colab'
     'num_classes': 18,
     'backbone': 'resnet50',
     'learning_rate': 1e-4,

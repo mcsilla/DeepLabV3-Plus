@@ -25,6 +25,7 @@ CONFIG = {
         'height': 768, 'width': 768, 'batch_size': 32
     },
     'strategy': 'tpu',
+    'mode': 'gcp',
     'tpu_name': 'deeplab-articles',
     'num_classes': 18,
     'backbone': 'resnet50',
