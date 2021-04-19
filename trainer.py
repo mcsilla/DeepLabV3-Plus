@@ -62,7 +62,7 @@ If provided, checkpoint_dir is set to wandb://
                 tpu_address = 'grpc://' + os.environ['COLAB_TPU_ADDR']
                 print('TPU address is', tpu_address)
             # Get a handle to the attached TPU. On GCP it will be the CloudTPU itself
-            resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=tpu_adress)
+            resolver = tf.distribute.cluster_resolver.TPUClusterResolver(tpu=tpu_address)
             # Connect to the TPU handle and initialise it
             tf.config.experimental_connect_to_cluster(resolver)
             tf.tpu.experimental.initialize_tpu_system(resolver)
