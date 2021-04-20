@@ -3,7 +3,10 @@ import tensorflow as tf
 from model import DeeplabV3Plus
 from datasets.create_tfrecords import resize_image
 import PIL.Image as Image
-
+from pathlib import Path
+import random
+from glob import glob
+import tqdm
 
 def read_image(image_path, target_height, target_width):
     image = tf.io.read_file(image_path)
@@ -71,7 +74,7 @@ if __name__ == '__main__':
         (254, 0, 255),
         (255, 255, 220)
     ])
-    
+
     model = DeeplabV3Plus(
         num_classes=18,
         backbone='resnet50'
@@ -81,26 +84,36 @@ if __name__ == '__main__':
         loss='sparse_categorical_crossentropy',
         # metrics=['accuracy']
     )
-    checkpoint_path = '/mnt/noah/dev/csilla/cv/articles/deeplab/model/ckpt_0052'
+    checkpoint_path = '/mnt/noah/dev/csilla/cv/articles/deeplab/model/ckpt_0058'
     model.load_weights(checkpoint_path)
 
-    image_path = '/mnt/noah/dev/training_data/vision/article/PestiHirlap/PestiHirlap_1944_12/PestiHirlap_1944_12_06/0022.jpg'
+    input_prefix = Path('/mnt/noah/dev/training_data/vision/article/')
+    # random_train_images = random.choices([img for img in input_prefix.glob('**/*.jpg') if not str(img.relative_to(input_prefix)).startswith(
+    #                 ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))], k=20)
+    random_val_images = random.choices(glob(str(input_prefix / 'MagyarNemzet/**/*.jpg'), recursive=True) + glob(str(input_prefix/'KiadokKronosz/**/*.jpg'), recursive=True) + glob(str(input_prefix/'VilagIfjusaga/**/*.jpg'), recursive=True), k=20)
+
+    # image_path = '/mnt/noah/dev/training_data/vision/article/PestiHirlap/PestiHirlap_1944_12/PestiHirlap_1944_12_06/0022.jpg'
+
     WIDTH = 768
     HEIGHT = 768
 
-    image_tensor = read_image(image_path, 768, 768)
-    resized_image_array = np.array(resize_image(image_path, 768, 768))
+    i = 0
+    for image_path in tqdm.tqdm(random_val_images):
+        image_path = str(image_path)
+        image_tensor = read_image(image_path, 768, 768)
+        resized_image_array = np.array(resize_image(image_path, 768, 768))
 
-    res = infer(model, image_tensor, HEIGHT, WIDTH)
-    class_ids = np.unique(res)
+        res = infer(model, image_tensor, HEIGHT, WIDTH)
+        class_ids = np.unique(res)
 
-    for class_id in class_ids:
-        if class_id == 0:
-            continue
-        mask = np.zeros_like(res, dtype=np.uint8)
-        mask[res == class_id] = 1
-        color = COLORS[class_id]
-        draw_mask_on_image_array(resized_image_array, mask, color=color, alpha=0.4)
+        for class_id in class_ids:
+            if class_id == 0:
+                continue
+            mask = np.zeros_like(res, dtype=np.uint8)
+            mask[res == class_id] = 1
+            color = COLORS[class_id]
+            draw_mask_on_image_array(resized_image_array, mask, color=color, alpha=0.4)
 
-    with Image.fromarray(resized_image_array) as img:
-        img.save('/mnt/noah/dev/csilla/cv/articles/test.jpg')
+        with Image.fromarray(resized_image_array) as img:
+            img.save(f'/mnt/noah/dev/csilla/cv/articles/test_images/val_test_{i}.jpg')
+        i += 1
