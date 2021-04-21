@@ -51,27 +51,27 @@ def create_tf_example(image_path, label_path, longer_side = 1024):
 
 if __name__ == '__main__':
     input_prefix = Path('/mnt/noah/dev/csilla/cv/articles/deeplab/article_new')
-    # tfrec_prefix = Path('/mnt/noah/dev/csilla/deeplab/tfrecords/')
-    tfrec_prefix = Path('/mnt/noah/dev/csilla/cv/articles/deeplab/test_records')
+    tfrec_prefix = Path('/mnt/noah/dev/csilla/cv/articles/deeplab/tfrecords_original_ratio/')
+    # tfrec_prefix = Path('/mnt/noah/dev/csilla/cv/articles/deeplab/test_records')
     for mode in ['train', 'val']:
-        # if mode == 'train':
-        #     images = sorted([img for img in input_prefix.glob('**/*.jpg') if not str(img.relative_to(input_prefix)).startswith(
-        #             ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))])
-        #     labels = sorted([img for img in input_prefix.glob('**/*.png') if not str(img.relative_to(input_prefix)).startswith(
-        #             ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))])
-        # else:
-        #     images = sorted(glob(str(input_prefix/'MagyarNemzet/**/*.jpg'), recursive=True) +
-        #                     glob(str(input_prefix/'KiadokKronosz/**/*.jpg'), recursive=True) +
-        #                     glob(str(input_prefix/'VilagIfjusaga/**/*.jpg'), recursive=True))
-        #     labels = sorted(glob(str(input_prefix/'MagyarNemzet/**/*.png'), recursive=True) +
-        #                     glob(str(input_prefix/'KiadokKronosz/**/*.png'), recursive=True) +
-        #                     glob(str(input_prefix/'VilagIfjusaga/**/*.png'), recursive=True))
         if mode == 'train':
-            images = sorted(input_prefix.glob('VilagIfjusaga/VilagIfjusaga_1976/VilagIfjusaga_1976_01_01/*.jpg'))
-            labels = sorted(input_prefix.glob('VilagIfjusaga/VilagIfjusaga_1976/VilagIfjusaga_1976_01_01/*.png'))
+            images = sorted([img for img in input_prefix.glob('**/*.jpg') if not str(img.relative_to(input_prefix)).startswith(
+                    ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))])
+            labels = sorted([img for img in input_prefix.glob('**/*.png') if not str(img.relative_to(input_prefix)).startswith(
+                    ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))])
         else:
-            images = sorted(input_prefix.glob('VasarnapiUjsag/VasarnapiUjsag_1921/VasarnapiUjsag_1921_szam_06/*.jpg'))
-            labels = sorted(input_prefix.glob('VasarnapiUjsag/VasarnapiUjsag_1921/VasarnapiUjsag_1921_szam_06/*.png'))
+            images = sorted(glob(str(input_prefix/'MagyarNemzet/**/*.jpg'), recursive=True) +
+                            glob(str(input_prefix/'KiadokKronosz/**/*.jpg'), recursive=True) +
+                            glob(str(input_prefix/'VilagIfjusaga/**/*.jpg'), recursive=True))
+            labels = sorted(glob(str(input_prefix/'MagyarNemzet/**/*.png'), recursive=True) +
+                            glob(str(input_prefix/'KiadokKronosz/**/*.png'), recursive=True) +
+                            glob(str(input_prefix/'VilagIfjusaga/**/*.png'), recursive=True))
+        # if mode == 'train':
+        #     images = sorted(input_prefix.glob('VilagIfjusaga/VilagIfjusaga_1976/VilagIfjusaga_1976_01_01/*.jpg'))
+        #     labels = sorted(input_prefix.glob('VilagIfjusaga/VilagIfjusaga_1976/VilagIfjusaga_1976_01_01/*.png'))
+        # else:
+        #     images = sorted(input_prefix.glob('VasarnapiUjsag/VasarnapiUjsag_1921/VasarnapiUjsag_1921_szam_06/*.jpg'))
+        #     labels = sorted(input_prefix.glob('VasarnapiUjsag/VasarnapiUjsag_1921/VasarnapiUjsag_1921_szam_06/*.png'))
         assert len(images) == len(labels)
         print(f'Number of {mode} images: ', len(images))
         example_cache = []
