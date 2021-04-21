@@ -59,12 +59,13 @@ def resize(image, label, height, width):
     resized_label = tf.image.resize_with_pad(label, height, width, method='nearest')
     return resized_image, resized_label
 
-def transform(image, label, height=768, width=768):
-    image, label = make_random_transformation(image, label)
-    image, label = resize(image, label, height, width)
-    return image, label
+# def transform(image, label, height=768, width=768):
+#     image, label = make_random_transformation(image, label)
+#     image, label = resize(image, label, height, width)
+#     return image, label
 
-def create_input(image, label):
+def create_input(image, label, height=768, width=768):
+    image, label = resize(image, label, height, width)
     image = tf.cast(image, tf.float32) / 127.5 - 1
     label = tf.cast(label, tf.float32)
     image = tf.ensure_shape(image, [768, 768, 3])

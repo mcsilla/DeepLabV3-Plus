@@ -2,13 +2,13 @@ import tensorflow as tf
 import PIL.Image as Image
 import numpy as np
 from .tf_example_decoder import TfExampleDecoder
-from .transformations import transform, create_input
+from .transformations import make_random_transformation, create_input
 class GenericDataLoader:
 
     def __init__(self, configs):
         self.configs = configs
         self._parser_fn = TfExampleDecoder().parse_example
-        self._transform_fn = transform
+        self._transform_fn = make_random_transformation
         self._create_input_fn = create_input
         # self.assert_dataset()
 
@@ -80,7 +80,7 @@ class GenericDataLoader:
         if dataset_type == 'train':
             dataset = dataset.map(self._transform_fn)
         dataset = dataset.map(self._create_input_fn)
-        dataset = dataset.shuffle(20000, reshuffle_each_iteration=True)
+        dataset = dataset.shuffle(5000, reshuffle_each_iteration=True)
         dataset = dataset.batch(self.configs['batch_size'], drop_remainder=True)
         dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
         return dataset
