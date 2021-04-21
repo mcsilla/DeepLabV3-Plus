@@ -2,14 +2,14 @@ import tensorflow as tf
 import PIL.Image as Image
 import numpy as np
 from .tf_example_decoder import TfExampleDecoder
-import transformations
+from .transformations import transform, create_input
 class GenericDataLoader:
 
     def __init__(self, configs):
         self.configs = configs
         self._parser_fn = TfExampleDecoder().parse_example
-        self._transform_fn = transformations.transform
-        self._create_input_fn = transformations.create_input
+        self._transform_fn = transform
+        self._create_input_fn = create_input
         # self.assert_dataset()
 
     # def assert_dataset(self):

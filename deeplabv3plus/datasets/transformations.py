@@ -15,7 +15,9 @@ def random_contrast(image, label):
     return tf.image.stateless_random_contrast(image, lower=0.9, upper=1.5, seed=seed), label
 
 def random_crop(image, label):
-    fraction = random.uniform(0.95, 1)
+    fraction = tf.random.uniform(
+        [], minval=0.95, maxval=1, dtype=tf.dtypes.float32, seed=None, name=None
+    )
     return (tf.image.central_crop(image, central_fraction=fraction), 
             tf.image.central_crop(label, central_fraction=fraction))
 
