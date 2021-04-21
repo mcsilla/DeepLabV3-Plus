@@ -29,7 +29,7 @@ class Trainer:
         # self.train_data_length = len(train_dataloader)
         # print('[+] Data points in train dataset: {}'.format(
         #     self.train_data_length))
-        self.train_dataset = train_dataloader.get_dataset()
+        self.train_dataset = train_dataloader.get_dataset('train')
         # print('Train Dataset:', self.train_dataset)
 
         # Validation Dataset
@@ -38,7 +38,7 @@ class Trainer:
         # self.val_data_length = len(val_dataloader)
         # print('Data points in train dataset: {}'.format(
         #     self.val_data_length))
-        self.val_dataset = val_dataloader.get_dataset()
+        self.val_dataset = val_dataloader.get_dataset('val')
         # print('Val Dataset:', self.val_dataset)
 
         self._model = None
@@ -70,7 +70,7 @@ class Trainer:
                     learning_rate=self.config['learning_rate']
                 ),
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-                # metrics=['accuracy']
+                metrics=['accuracy']
             )
             latest_ckpt = self.continue_running()
             if latest_ckpt is not None:
@@ -169,6 +169,12 @@ class Trainer:
             print("[-] Defaulting to TensorBoard logging...")
             return tf.keras.callbacks.TensorBoard(log_dir=self.config['log_dir'], update_freq='batch')
 
+    def learning_rate_scheduler(self, epoch, lr):
+        if epoch < 20:
+            return lr
+        else:
+            return lr * tf.math.exp(-0.05)
+
     def train(self):
         """Trainer entry point.
 
@@ -177,23 +183,6 @@ class Trainer:
         """
         # if not self._wandb_initialized:
         #     self.connect_wandb()
-
-        # with self.config['strategy'].scope():
-        #     my_model = DeeplabV3Plus(
-        #         num_classes=self.config['num_classes'],
-        #         backbone=self.config['backbone']
-        #     )
-        #
-        #     my_model.compile(
-        #         optimizer=tf.keras.optimizers.Adam(
-        #             learning_rate=self.config['learning_rate']
-        #         ),
-        #         loss=tf.keras.losses.SparseCategoricalCrossentropy(),
-        #         # metrics=['accuracy']
-        #     )
-        #     latest_ckpt = self.continue_running()
-        #     if latest_ckpt is not None:
-        #         my_model.load_weights(latest_ckpt)
 
         callbacks = [
             tf.keras.callbacks.ModelCheckpoint(
@@ -204,7 +193,8 @@ class Trainer:
                 # save_weights_only=True
             ),
 
-            self._get_logger_callback()
+            self._get_logger_callback(),
+            tf.keras.callbacks.LearningRateScheduler(self.scheduler)
         ]
 
         history = self.model.fit(

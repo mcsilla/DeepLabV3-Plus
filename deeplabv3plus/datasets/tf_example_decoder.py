@@ -25,17 +25,6 @@ class TfExampleDecoder:
           lambda: tf.image.decode_jpeg(content, channels),
           lambda: tf.image.decode_png(content, channels))
 
-    # def _decode_image(self, parsed_tensors):
-    #     """Decodes the image and set its static shape."""
-    #     image = tf.io.decode_image(parsed_tensors['image/encoded'], channels=3)
-    #     image = tf.ensure_shape(image, [None, None, 3])
-    #     return image
-    #
-    # def _decode_label(self, parsed_tensors):
-    #     """Decodes the label and set its static shape."""
-    #     label = tf.io.decode_png(parsed_tensors['label/encoded'], channels=1)
-    #     label = tf.ensure_shape(label, [None, None, 1])
-    #     return label
     def decode(self, serialized_example):
         parsed_tensors = tf.io.parse_single_example(
             serialized=serialized_example, features=self._keys_to_features)
@@ -44,10 +33,6 @@ class TfExampleDecoder:
         width = parsed_tensors['image/width']
         height = parsed_tensors['image/height']
         return image, label, width, height
-
-    def decode_raw_input(self, example):
-        image, label, width, height = self.decode(example)
-        return image, label
 
     def parse_example(self, example):
         image, label, width, height = self.decode(example)

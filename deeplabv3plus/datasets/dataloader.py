@@ -8,7 +8,8 @@ class GenericDataLoader:
     def __init__(self, configs):
         self.configs = configs
         self._parser_fn = TfExampleDecoder().parse_example
-        self._transform_fn = transformations.create_input
+        self._transform_fn = transformations.transform
+        self._create_input_fn = transformations.create_input
         # self.assert_dataset()
 
     # def assert_dataset(self):
@@ -65,7 +66,7 @@ class GenericDataLoader:
     #     dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
     #     return dataset
 
-    def get_dataset(self):
+    def get_dataset(self, dataset_type):
         record_names_dataset = tf.data.Dataset.from_tensor_slices(self.configs['tf_records'])
         record_names_dataset.shuffle(len(self.configs['tf_records']), reshuffle_each_iteration=True)
         dataset = record_names_dataset.interleave(
@@ -76,7 +77,9 @@ class GenericDataLoader:
         #     print("AAAA", x)
         #     return x
         dataset = dataset.map(self._parser_fn)
-        dataset = dataset.map(self._transform_fn)
+        if dataset_type == 'train':
+            dataset = dataset.map(self._transform_fn)
+        dataset = dataset.map(self._create_input_fn)
         dataset = dataset.shuffle(20000, reshuffle_each_iteration=True)
         dataset = dataset.batch(self.configs['batch_size'], drop_remainder=True)
         dataset = dataset.prefetch(tf.data.experimental.AUTOTUNE)
