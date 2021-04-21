@@ -1,19 +1,21 @@
 import tensorflow as tf
 import numpy as np
 
-
+@tf.function
 def random_brightness(image, label):
     seed = tf.random.uniform(
         [2], minval=0, maxval=10, dtype=tf.dtypes.int32, seed=None, name=None
     )
     return tf.image.stateless_random_brightness(image, max_delta=0.1, seed=seed), label
 
+@tf.function
 def random_contrast(image, label):
     seed = tf.random.uniform(
         [2], minval=0, maxval=10, dtype=tf.dtypes.int32, seed=None, name=None
     )
     return tf.image.stateless_random_contrast(image, lower=0.9, upper=1.5, seed=seed), label
 
+@tf.function
 def random_crop(image, label):
     fraction = tf.random.uniform(
         [], minval=0.95, maxval=1, dtype=tf.dtypes.float32, seed=None, name=None
@@ -21,12 +23,14 @@ def random_crop(image, label):
     return (tf.image.central_crop(image, central_fraction=fraction), 
             tf.image.central_crop(label, central_fraction=fraction))
 
+@tf.function
 def random_hue(image, label):
     seed = tf.random.uniform(
         [2], minval=0, maxval=10, dtype=tf.dtypes.int32, seed=None, name=None
     )
     return tf.image.stateless_random_hue(image, max_delta=0.08, seed=seed), label
 
+@tf.function
 def random_saturation(image, label):
     seed = tf.random.uniform(
         [2], minval=0, maxval=10, dtype=tf.dtypes.int32, seed=None, name=None
@@ -37,6 +41,7 @@ def make_gray(image, label):
     gray_image = tf.image.rgb_to_grayscale(image)
     return tf.image.grayscale_to_rgb(gray_image), label
 
+@tf.function
 def make_random_transformation(image, label):
     rand = tf.random.uniform(
         [], minval=0, maxval=1, dtype=tf.dtypes.float32, seed=None, name=None
