@@ -194,7 +194,7 @@ class Trainer:
             ),
 
             self._get_logger_callback(),
-            tf.keras.callbacks.LearningRateScheduler(self.scheduler)
+            tf.keras.callbacks.LearningRateScheduler(self.learning_rate_scheduler)
         ]
 
         history = self.model.fit(
