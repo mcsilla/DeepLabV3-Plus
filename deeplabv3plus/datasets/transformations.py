@@ -29,10 +29,11 @@ def random_crop(image, label):
     seed = tf.random.uniform(
         [2], minval=0, maxval=10, dtype=tf.dtypes.int32, seed=None, name=None
     )
-    new_img_size = tf.cast(tf.round(image.shape.as_list() * rand), tf.int32)
-    new_label_size = tf.cast(tf.round(label.shape.as_list() * rand), tf.int32)
+    new_size = tf.cast(tf.round(tf.cast(tf.shape(image)[:2], dtype=tf.float32) * rand), tf.int32)
+    new_image_size = tf.concat([new_size, tf.constant([3])], axis=0)
+    new_label_size = tf.concat([new_size, tf.constant([1])], axis=0)
     new_image = tf.image.stateless_random_crop(
-        image, new_img_size, seed=seed, name=None
+        image, new_image_size, seed=seed, name=None
     )
     new_label = tf.image.stateless_random_crop(
         label, new_label_size, seed=seed, name=None
