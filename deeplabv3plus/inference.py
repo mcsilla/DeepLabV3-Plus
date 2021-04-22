@@ -82,15 +82,15 @@ if __name__ == '__main__':
     model.compile(
         optimizer='adam',
         loss='sparse_categorical_crossentropy',
-        # metrics=['accuracy']
+        metrics=['accuracy']
     )
-    checkpoint_path = '/mnt/noah/dev/csilla/cv/articles/deeplab/model/ckpt_0058'
+    checkpoint_path = '/mnt/noah/dev/csilla/cv/articles/deeplab/model_augmented/ckpt_0022'
     model.load_weights(checkpoint_path)
 
     input_prefix = Path('/mnt/noah/dev/training_data/vision/article/')
-    # random_train_images = random.choices([img for img in input_prefix.glob('**/*.jpg') if not str(img.relative_to(input_prefix)).startswith(
-    #                 ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))], k=20)
-    random_val_images = random.choices(glob(str(input_prefix / 'MagyarNemzet/**/*.jpg'), recursive=True) + glob(str(input_prefix/'KiadokKronosz/**/*.jpg'), recursive=True) + glob(str(input_prefix/'VilagIfjusaga/**/*.jpg'), recursive=True), k=20)
+    random_train_images = random.choices([img for img in input_prefix.glob('**/*.jpg') if not str(img.relative_to(input_prefix)).startswith(
+                    ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))], k=100)
+    random_val_images = random.choices(glob(str(input_prefix / 'MagyarNemzet/**/*.jpg'), recursive=True) + glob(str(input_prefix/'KiadokKronosz/**/*.jpg'), recursive=True) + glob(str(input_prefix/'VilagIfjusaga/**/*.jpg'), recursive=True), k=100)
 
     # image_path = '/mnt/noah/dev/training_data/vision/article/PestiHirlap/PestiHirlap_1944_12/PestiHirlap_1944_12_06/0022.jpg'
 
@@ -115,5 +115,5 @@ if __name__ == '__main__':
             draw_mask_on_image_array(resized_image_array, mask, color=color, alpha=0.4)
 
         with Image.fromarray(resized_image_array) as img:
-            img.save(f'/mnt/noah/dev/csilla/cv/articles/test_images/val_test_{i}.jpg')
+            img.save(f'/mnt/noah/dev/csilla/cv/articles/test_images_model_augmented/ckpt_0022/val_test_{i}.jpg')
         i += 1
