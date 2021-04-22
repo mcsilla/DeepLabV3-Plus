@@ -118,6 +118,6 @@ def create_input(image, label, height=768, width=768):
     image, label = resize(image, label, height, width)
     image = tf.cast(image, tf.float32) / 127.5 - 1
     label = tf.cast(label, tf.float32)
-    image = tf.ensure_shape(image, [768, 768, 3])
-    label = tf.ensure_shape(label, [768, 768, 1])
+    image = tf.ensure_shape(image, [height, width, 3])
+    label = tf.ensure_shape(label, [height, width, 1])
     return image, label

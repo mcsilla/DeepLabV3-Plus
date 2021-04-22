@@ -9,7 +9,7 @@ class GenericDataLoader:
         self.configs = configs
         self._parser_fn = TfExampleDecoder().parse_example
         self._transform_fn = make_random_transformation
-        self._create_input_fn = create_input
+        self._create_input_fn = lambda image, label: create_input(image, label, height=1024, width=1024)
         # self.assert_dataset()
 
     # def assert_dataset(self):
