@@ -8,8 +8,8 @@ import tensorflow as tf
 
 tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-train-raw/*'
 tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-val-raw/*'
-model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_augmented'
-log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_augmented/logs'
+model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_black_1024'
+log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_black_1024/logs'
 
 CONFIG = {
     # We mandate specifying project_name and experiment_name in every config
@@ -18,22 +18,26 @@ CONFIG = {
     'experiment_name': 'articles-segmentation-resnet-50-backbone',
     'train_dataset_config': {
         'tf_records': tf.io.gfile.glob(tfrec_train_pattern),
-        'height': 768, 'width': 768, 'batch_size': 64
+        'height': 1024, 'width': 1024, 'batch_size': 32
     },
     'val_dataset_config': {
         'tf_records': tf.io.gfile.glob(tfrec_val_pattern),
-        'height': 768, 'width': 768, 'batch_size': 32
+        'height': 1024, 'width': 1024, 'batch_size': 32
     },
     'strategy': 'tpu',
     'mode': 'gcp',
-    'tpu_name': 'deeplab-elod',
+    'tpu_name': 'deeplab-articles',
     'num_classes': 18,
     'backbone': 'resnet50',
-    'learning_rate': 1e-4,
+    'initial_learning_rate': 5e-4,
+    'end_learning_rate': 1e-5,
     'checkpoint_dir': model_dir,
     'checkpoint_file_prefix': "ckpt_",
     'log_dir': log_dir,
-    'epochs': 100,
-    'steps_per_epoch': 91599 // 64,
-    'validation_steps': 7429 // 32,
+    'epochs': 50,
+    'power': 0.9
 }
+
+steps_per_epoch = 91599 // CONFIG['train_dataset_config']['batch_size']
+CONFIG['decay_steps'] = steps_per_epoch * 30
+# validation_steps: 7429 // CONFIG['val_dataset_config']['batch_size']
