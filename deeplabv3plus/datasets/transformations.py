@@ -1,5 +1,5 @@
 import tensorflow as tf
-# import tensorflow_probability as tfp
+import tensorflow_probability as tfp
 import numpy as np
 
 
@@ -58,19 +58,19 @@ def make_gray(image, label):
     return tf.image.grayscale_to_rgb(gray_image), label
 
 
-# def gaussian_kernel(size: int,
-#                     mean: float,
-#                     std: float,
-#                     ):
-#     d = tfp.distributions.Normal(loc=mean, scale=std)
-#
-#     vals = d.prob(tf.range(start=-size, limit=size + 1, dtype=tf.float32))
-#
-#     gauss_kernel = tf.einsum('i,j->ij',
-#                              vals,
-#                              vals)
-#
-#     return gauss_kernel / tf.reduce_sum(gauss_kernel)
+def gaussian_kernel(size: int,
+                    mean: float,
+                    std: float,
+                    ):
+    d = tfp.distributions.Normal(loc=mean, scale=std)
+
+    vals = d.prob(tf.range(start=-size, limit=size + 1, dtype=tf.float32))
+
+    gauss_kernel = tf.einsum('i,j->ij',
+                             vals,
+                             vals)
+
+    return gauss_kernel / tf.reduce_sum(gauss_kernel)
 
 
 def mean_kernel(size: int):
@@ -100,7 +100,7 @@ def make_random_transformation(image, label):
     rand_gray = tf.random.uniform(
         [], minval=0, maxval=1, dtype=tf.dtypes.float32, seed=None, name=None
     )
-    kernel = mean_kernel(size=80)
+    kernel = gaussian_kernel(size=49, mean=0, std=10)
     crop = tf.constant(0.1)
     gray = tf.constant(0.15)
     black = tf.constant(0.25)

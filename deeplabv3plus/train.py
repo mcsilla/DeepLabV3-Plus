@@ -59,13 +59,12 @@ class Trainer:
         if self._model is not None:
             return self._model
 
-        decay_schedule = tf.keras.optimizers.schedules.PolynomialDecay(
-            initial_learning_rate=self.config['initial_learning_rate'],
-            end_learning_rate=self.config['end_learning_rate'],
-            decay_steps=self.config['decay_steps'],
-            power=self.config['power'])
-
         with self.config['strategy'].scope():
+            decay_schedule = tf.keras.optimizers.schedules.PolynomialDecay(
+                initial_learning_rate=self.config['initial_learning_rate'],
+                end_learning_rate=self.config['end_learning_rate'],
+                decay_steps=self.config['decay_steps'],
+                power=self.config['power'])
             self._model = DeeplabV3Plus(
                 num_classes=self.config['num_classes'],
                 backbone=self.config['backbone']
