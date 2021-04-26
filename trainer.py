@@ -74,7 +74,7 @@ If provided, checkpoint_dir is set to wandb://
             print(f"Initializing tpu {CONFIG['tpu_name']}...")
             tf.tpu.experimental.initialize_tpu_system(resolver)
             print("All TPU devices: ", tf.config.list_logical_devices('TPU'))
-            CONFIG['strategy'] = tf.distribute.experimental.TPUStrategy(resolver)
+            CONFIG['strategy'] = tf.distribute.TPUStrategy(resolver)
 
     TRAINER = Trainer(CONFIG)
     HISTORY = TRAINER.train()
