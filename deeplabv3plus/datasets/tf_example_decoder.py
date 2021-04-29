@@ -8,6 +8,8 @@ class TfExampleDecoder:
         self._keys_to_features = {
             'image/encoded':
                 tf.io.FixedLenFeature((), tf.string),
+            'image_black/encoded':
+                tf.io.FixedLenFeature((), tf.string),
             'image/filename':
                 tf.io.FixedLenFeature((), tf.string),
             'image/height':
@@ -16,8 +18,6 @@ class TfExampleDecoder:
                 tf.io.FixedLenFeature((), tf.int64),
             'label/encoded':
                 tf.io.FixedLenFeature((), tf.string),
-            'label/filename':
-                tf.io.FixedLenFeature((), tf.string)
         }
     def _decode_image(self, content, channels):
       return tf.cond(
@@ -30,10 +30,26 @@ class TfExampleDecoder:
             serialized=serialized_example, features=self._keys_to_features)
         image = self._decode_image(parsed_tensors['image/encoded'], 3)
         label = self._decode_image(parsed_tensors['label/encoded'], 1)
+        image_black = self._decode_image(parsed_tensors['image_black/encoded'], 1)
+        image_black = tf.image.grayscale_to_rgb(image_black)
         width = parsed_tensors['image/width']
         height = parsed_tensors['image/height']
-        return image, label, width, height
+        return image, image_black, label, width, height
+
+    def make_gray(self, image, label):
+        gray_image = tf.image.rgb_to_grayscale(image)
+        return tf.image.grayscale_to_rgb(gray_image), label
 
     def parse_example(self, example):
-        image, label, width, height = self.decode(example)
+        image, image_black, label, width, height = self.decode(example)
+        rand = tf.random.uniform(
+            [], minval=0, maxval=1, dtype=tf.dtypes.float32, seed=None, name=None
+        )
+        gray = tf.constant(0.15)
+        black = tf.constant(0.25)
+        gray_fn = lambda: self.make_gray(image, label)
+        black_fn = lambda: (image_black, label)
+        id_fn = lambda: (image, label)
+        image, label = tf.case([(tf.less(rand, gray), gray_fn),
+                                (tf.less(rand, black), black_fn)], exclusive=False, default=id_fn)
         return image, label

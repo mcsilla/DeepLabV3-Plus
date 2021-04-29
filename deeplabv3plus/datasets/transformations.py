@@ -97,25 +97,16 @@ def make_random_transformation(image, label):
     rand_crop = tf.random.uniform(
         [], minval=0, maxval=1, dtype=tf.dtypes.float32, seed=None, name=None
     )
-    rand_gray = tf.random.uniform(
-        [], minval=0, maxval=1, dtype=tf.dtypes.float32, seed=None, name=None
-    )
-    kernel = gaussian_kernel(size=49, mean=0, std=10)
     crop = tf.constant(0.1)
-    gray = tf.constant(0.15)
-    black = tf.constant(0.25)
     borders = tf.constant([0.25, 0.5, 0.75, 1])
+
     crop_fn = lambda: random_crop(image, label)
-    gray_fn = lambda: make_gray(image, label)
-    black_fn = lambda: (make_black(image, kernel, c=15), label)
     hue_fn = lambda: random_hue(image, label)
     saturation_fn = lambda: random_saturation(image, label)
     brightness_fn = lambda: random_brightness(image, label)
     contrast_fn = lambda: random_contrast(image, label)
     id_fn = lambda: (image, label)
 
-    image, label = tf.case([(tf.less(rand_gray, gray), gray_fn),
-                            (tf.less(rand_gray, black), black_fn)], exclusive=False, default=id_fn)
     image, label = tf.cond(
         tf.math.less(rand_crop, crop), true_fn=crop_fn, false_fn=id_fn, name=None
     )
