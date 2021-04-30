@@ -60,11 +60,11 @@ class Trainer:
             return self._model
 
         with self.config['strategy'].scope():
-            # decay_schedule = tf.keras.optimizers.schedules.PolynomialDecay(
-            #     initial_learning_rate=self.config['initial_learning_rate'],
-            #     end_learning_rate=self.config['end_learning_rate'],
-            #     decay_steps=self.config['decay_steps'],
-            #     power=self.config['power'])
+            decay_schedule = tf.keras.optimizers.schedules.PolynomialDecay(
+                initial_learning_rate=self.config['initial_learning_rate'],
+                end_learning_rate=self.config['end_learning_rate'],
+                decay_steps=self.config['decay_steps'],
+                power=self.config['power'])
             self._model = DeeplabV3Plus(
                 num_classes=self.config['num_classes'],
                 backbone=self.config['backbone']
@@ -73,7 +73,7 @@ class Trainer:
             self._model.compile(
                 optimizer=tf.keras.optimizers.Adam(
                     # learning_rate=decay_schedule
-                    learning_rate=self.config['initial_learning_rate']
+                    learning_rate=decay_schedule
                 ),
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(),
                 metrics=['accuracy']
@@ -200,7 +200,7 @@ class Trainer:
             ),
 
             self._get_logger_callback(),
-            tf.keras.callbacks.LearningRateScheduler(self.learning_rate_scheduler)
+            # tf.keras.callbacks.LearningRateScheduler(self.learning_rate_scheduler)
         ]
 
         history = self.model.fit(
