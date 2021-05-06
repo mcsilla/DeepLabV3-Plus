@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 from model import DeeplabV3Plus
-from datasets.create_tfrecords import resize_image
+from datasets.create_tfrecords import resize_image_from_path
 import PIL.Image as Image
 from pathlib import Path
 import random
@@ -84,36 +84,64 @@ if __name__ == '__main__':
         loss='sparse_categorical_crossentropy',
         metrics=['accuracy']
     )
-    checkpoint_path = '/mnt/noah/dev/csilla/cv/articles/deeplab/model_augmented/ckpt_0022'
+    checkpoint_path = '/mnt/noah/dev/csilla/cv/articles/deeplab/model_new/ckpt_0022'
     model.load_weights(checkpoint_path)
 
     input_prefix = Path('/mnt/noah/dev/training_data/vision/article/')
-    random_train_images = random.choices([img for img in input_prefix.glob('**/*.jpg') if not str(img.relative_to(input_prefix)).startswith(
-                    ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))], k=100)
-    random_val_images = random.choices(glob(str(input_prefix / 'MagyarNemzet/**/*.jpg'), recursive=True) + glob(str(input_prefix/'KiadokKronosz/**/*.jpg'), recursive=True) + glob(str(input_prefix/'VilagIfjusaga/**/*.jpg'), recursive=True), k=100)
+    # random.seed(7)
+    # random_train_images = random.choices([img for img in input_prefix.glob('**/*.jpg') if not str(img.relative_to(input_prefix)).startswith(
+    #                 ('MagyarNemzet', 'VilagIfjusaga', 'KiadokKronosz'))], k=100)
+    # random.seed(5)
+    # random_val_images = random.choices(glob(str(input_prefix / 'MagyarNemzet/**/*.jpg'), recursive=True) + glob(str(input_prefix/'KiadokKronosz/**/*.jpg'), recursive=True) + glob(str(input_prefix/'VilagIfjusaga/**/*.jpg'), recursive=True), k=100)
 
     # image_path = '/mnt/noah/dev/training_data/vision/article/PestiHirlap/PestiHirlap_1944_12/PestiHirlap_1944_12_06/0022.jpg'
+    random_train_images = []
+    random.seed(1)
+    random_train_images += random.choices(sorted(glob(str(input_prefix / 'NemzetiSport/**/*.jpg'), recursive=True)), k=20)
+    random.seed(2)
+    random_train_images += random.choices(sorted(glob(str(input_prefix / 'MagyarHirlap/**/*.jpg'), recursive=True)), k=20)
+    random.seed(3)
+    random_train_images += random.choices(sorted(glob(str(input_prefix / 'PestiNaplo/**/*.jpg'), recursive=True)), k=20)
+    random.seed(4)
+    random_train_images += random.choices(sorted(glob(str(input_prefix / 'VasarnapiUjsag/**/*.jpg'), recursive=True)), k=10)
+    random.seed(5)
+    random_train_images += random.choices(sorted(glob(str(input_prefix / '168ora/**/*.jpg'), recursive=True)), k=10)
+    random.seed(6)
+    random_train_images += random.choices(sorted(glob(str(input_prefix / 'KiadokTinta/**/*.jpg'), recursive=True)), k=10)
 
-    WIDTH = 768
-    HEIGHT = 768
+    random_val_images = []
+    random.seed(7)
+    random_val_images += random.choices(sorted(glob(str(input_prefix / 'MagyarNemzet/**/*.jpg'), recursive=True)), k=60)
+    random.seed(8)
+    random_val_images += random.choices(sorted(glob(str(input_prefix / 'VilagIfjusaga/**/*.jpg'), recursive=True)), k=20)
+    random.seed(9)
+    random_val_images += random.choices(sorted(glob(str(input_prefix / 'KiadokKronosz/**/*.jpg'), recursive=True)), k=10)
 
-    i = 0
-    for image_path in tqdm.tqdm(random_val_images):
-        image_path = str(image_path)
-        image_tensor = read_image(image_path, 768, 768)
-        resized_image_array = np.array(resize_image(image_path, 768, 768))
 
-        res = infer(model, image_tensor, HEIGHT, WIDTH)
-        class_ids = np.unique(res)
+    jobs = {'val': random_val_images,
+            'train': random_train_images}
 
-        for class_id in class_ids:
-            if class_id == 0:
-                continue
-            mask = np.zeros_like(res, dtype=np.uint8)
-            mask[res == class_id] = 1
-            color = COLORS[class_id]
-            draw_mask_on_image_array(resized_image_array, mask, color=color, alpha=0.4)
+    WIDTH = 1024
+    HEIGHT = 1024
 
-        with Image.fromarray(resized_image_array) as img:
-            img.save(f'/mnt/noah/dev/csilla/cv/articles/test_images_model_augmented/ckpt_0022/val_test_{i}.jpg')
-        i += 1
+    for key in jobs:
+        i = 0
+        for image_path in tqdm.tqdm(jobs[key]):
+            image_path = str(image_path)
+            image_tensor = read_image(image_path, HEIGHT, WIDTH)
+            resized_image_array = np.array(resize_image_from_path(image_path, HEIGHT, WIDTH))
+
+            res = infer(model, image_tensor, HEIGHT, WIDTH)
+            class_ids = np.unique(res)
+
+            for class_id in class_ids:
+                if class_id == 0:
+                    continue
+                mask = np.zeros_like(res, dtype=np.uint8)
+                mask[res == class_id] = 1
+                color = COLORS[class_id]
+                draw_mask_on_image_array(resized_image_array, mask, color=color, alpha=0.4)
+
+            with Image.fromarray(resized_image_array) as img:
+                img.save(f'/mnt/noah/dev/csilla/cv/articles/test_images_deeplab/{key}_{i}.jpg')
+            i += 1
