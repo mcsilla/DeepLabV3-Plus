@@ -44,8 +44,12 @@ def float_feature(value):
 def float_list_feature(value):
   return tf.train.Feature(float_list=tf.train.FloatList(value=value))
 
-def resize_image_from_path(image_path, new_height, new_width, mode='RGB'):
-    img_orig = Image.open(image_path, 'r')
+# image: path or numpy array
+def resize_image_from_path(image, new_height, new_width, mode='RGB'):
+    try:
+        img_orig = Image.open(image, 'r')
+    except:
+        img_orig = Image.fromarray(image)
     old_width, old_height = img_orig.size
     img_ratio = old_height / old_width
     if img_ratio >= new_height / new_width:

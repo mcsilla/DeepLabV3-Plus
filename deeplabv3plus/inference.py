@@ -95,27 +95,27 @@ if __name__ == '__main__':
     # random_val_images = random.choices(glob(str(input_prefix / 'MagyarNemzet/**/*.jpg'), recursive=True) + glob(str(input_prefix/'KiadokKronosz/**/*.jpg'), recursive=True) + glob(str(input_prefix/'VilagIfjusaga/**/*.jpg'), recursive=True), k=100)
 
     # image_path = '/mnt/noah/dev/training_data/vision/article/PestiHirlap/PestiHirlap_1944_12/PestiHirlap_1944_12_06/0022.jpg'
-    random_train_images = []
-    random.seed(1)
-    random_train_images += random.choices(sorted(glob(str(input_prefix / 'NemzetiSport/**/*.jpg'), recursive=True)), k=20)
-    random.seed(2)
-    random_train_images += random.choices(sorted(glob(str(input_prefix / 'MagyarHirlap/**/*.jpg'), recursive=True)), k=20)
-    random.seed(3)
-    random_train_images += random.choices(sorted(glob(str(input_prefix / 'PestiNaplo/**/*.jpg'), recursive=True)), k=20)
-    random.seed(4)
-    random_train_images += random.choices(sorted(glob(str(input_prefix / 'VasarnapiUjsag/**/*.jpg'), recursive=True)), k=10)
-    random.seed(5)
-    random_train_images += random.choices(sorted(glob(str(input_prefix / '168ora/**/*.jpg'), recursive=True)), k=10)
-    random.seed(6)
-    random_train_images += random.choices(sorted(glob(str(input_prefix / 'KiadokTinta/**/*.jpg'), recursive=True)), k=10)
-
-    random_val_images = []
-    random.seed(7)
-    random_val_images += random.choices(sorted(glob(str(input_prefix / 'MagyarNemzet/**/*.jpg'), recursive=True)), k=60)
-    random.seed(8)
-    random_val_images += random.choices(sorted(glob(str(input_prefix / 'VilagIfjusaga/**/*.jpg'), recursive=True)), k=20)
-    random.seed(9)
-    random_val_images += random.choices(sorted(glob(str(input_prefix / 'KiadokKronosz/**/*.jpg'), recursive=True)), k=10)
+    # random_train_images = []
+    # random.seed(1)
+    # random_train_images += random.choices(sorted(glob(str(input_prefix / 'NemzetiSport/**/*.jpg'), recursive=True)), k=20)
+    # random.seed(2)
+    # random_train_images += random.choices(sorted(glob(str(input_prefix / 'MagyarHirlap/**/*.jpg'), recursive=True)), k=20)
+    # random.seed(3)
+    # random_train_images += random.choices(sorted(glob(str(input_prefix / 'PestiNaplo/**/*.jpg'), recursive=True)), k=20)
+    # random.seed(4)
+    # random_train_images += random.choices(sorted(glob(str(input_prefix / 'VasarnapiUjsag/**/*.jpg'), recursive=True)), k=10)
+    # random.seed(5)
+    # random_train_images += random.choices(sorted(glob(str(input_prefix / '168ora/**/*.jpg'), recursive=True)), k=10)
+    # random.seed(6)
+    # random_train_images += random.choices(sorted(glob(str(input_prefix / 'KiadokTinta/**/*.jpg'), recursive=True)), k=10)
+    #
+    # random_val_images = []
+    # random.seed(7)
+    # random_val_images += random.choices(sorted(glob(str(input_prefix / 'MagyarNemzet/**/*.jpg'), recursive=True)), k=60)
+    # random.seed(8)
+    # random_val_images += random.choices(sorted(glob(str(input_prefix / 'VilagIfjusaga/**/*.jpg'), recursive=True)), k=20)
+    # random.seed(9)
+    # random_val_images += random.choices(sorted(glob(str(input_prefix / 'KiadokKronosz/**/*.jpg'), recursive=True)), k=10)
 
 
     jobs = {'val': random_val_images,
