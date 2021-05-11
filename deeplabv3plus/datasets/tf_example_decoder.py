@@ -25,11 +25,25 @@ class TfExampleDecoder:
           lambda: tf.image.decode_jpeg(content, channels),
           lambda: tf.image.decode_png(content, channels))
 
+    def exchange_values_to_one(self, label):
+        c_0 = tf.constant(0, dtype=tf.uint8)
+        c_2 = tf.constant(2, dtype=tf.uint8)
+        c_3 = tf.constant(3, dtype=tf.uint8)
+        c_4 = tf.constant(4, dtype=tf.uint8)
+        A_2 = tf.math.equal(label, c_2)
+        A_3 = tf.math.equal(label, c_3)
+        A_4 = tf.math.equal(label, c_4)
+        A_0 = tf.math.equal(label, c_0)
+        bool_tensor = tf.math.logical_or(tf.math.logical_or(A_2, A_3), tf.math.logical_or(A_0, A_4))
+        class_1_bool = tf.math.logical_not(bool_tensor)
+        return tf.where(class_1_bool, tf.ones_like(label), label)
+
     def decode(self, serialized_example):
         parsed_tensors = tf.io.parse_single_example(
             serialized=serialized_example, features=self._keys_to_features)
         image = self._decode_image(parsed_tensors['image/encoded'], 3)
         label = self._decode_image(parsed_tensors['label/encoded'], 1)
+        label = self.exchange_values_to_one(label)
         image_black = self._decode_image(parsed_tensors['image_black/encoded'], 1)
         image_black = tf.image.grayscale_to_rgb(image_black)
         width = parsed_tensors['image/width']
