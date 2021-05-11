@@ -6,10 +6,10 @@ from glob import glob
 from pathlib import Path
 import tensorflow as tf
 
-tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-train/*'
-tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-val/*'
-model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_new_1024'
-log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_new_1024/logs'
+tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/tfrec-train/*'
+tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/tfrec-val/*'
+model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_four_category'
+log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_four_category/logs'
 
 CONFIG = {
     # We mandate specifying project_name and experiment_name in every config
@@ -27,7 +27,7 @@ CONFIG = {
     'strategy': 'tpu',
     'mode': 'gcp',
     'tpu_name': 'deeplab-articles',
-    'num_classes': 18,
+    'num_classes': 5,
     'backbone': 'resnet50',
     'initial_learning_rate': 5e-4,
     'end_learning_rate': 1e-5,
