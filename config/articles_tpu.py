@@ -8,8 +8,8 @@ import tensorflow as tf
 
 tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/tfrec-train/*'
 tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/tfrec-val/*'
-model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_four_category'
-log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_four_category/logs'
+model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-four-category'
+log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-four-category/logs'
 
 CONFIG = {
     # We mandate specifying project_name and experiment_name in every config
