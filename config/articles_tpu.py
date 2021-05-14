@@ -6,8 +6,8 @@ from glob import glob
 from pathlib import Path
 import tensorflow as tf
 
-tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-train-v2/*'
-tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-val-v2/*'
+tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/tfrec-train-v2/*'
+tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/tfrec-val-v2/*'
 model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-two-category'
 log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-two-category/logs'
 
@@ -18,15 +18,15 @@ CONFIG = {
     'experiment_name': 'articles-segmentation-resnet-50-backbone',
     'train_dataset_config': {
         'tf_records': tf.io.gfile.glob(tfrec_train_pattern),
-        'height': 1024, 'width': 1024, 'batch_size': 48
+        'height': 1024, 'width': 1024, 'batch_size': 32
     },
     'val_dataset_config': {
         'tf_records': tf.io.gfile.glob(tfrec_val_pattern),
-        'height': 1024, 'width': 1024, 'batch_size': 48
+        'height': 1024, 'width': 1024, 'batch_size': 32
     },
     'strategy': 'tpu',
     'mode': 'gcp',
-    'tpu_name': 'deeplab-articles',
+    'tpu_name': 'deeplab-articles-two-category',
     'num_classes': 2,
     'backbone': 'resnet50',
     'initial_learning_rate': 5e-4,
