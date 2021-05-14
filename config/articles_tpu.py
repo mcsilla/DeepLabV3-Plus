@@ -6,10 +6,10 @@ from glob import glob
 from pathlib import Path
 import tensorflow as tf
 
-tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-train/*'
-tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-val/*'
-model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_new_1024'
-log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_new_1024/logs'
+tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-train-v2/*'
+tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-val-v2/*'
+model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-two-category'
+log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-two-category/logs'
 
 CONFIG = {
     # We mandate specifying project_name and experiment_name in every config
@@ -18,16 +18,16 @@ CONFIG = {
     'experiment_name': 'articles-segmentation-resnet-50-backbone',
     'train_dataset_config': {
         'tf_records': tf.io.gfile.glob(tfrec_train_pattern),
-        'height': 1024, 'width': 1024, 'batch_size': 32
+        'height': 1024, 'width': 1024, 'batch_size': 48
     },
     'val_dataset_config': {
         'tf_records': tf.io.gfile.glob(tfrec_val_pattern),
-        'height': 1024, 'width': 1024, 'batch_size': 32
+        'height': 1024, 'width': 1024, 'batch_size': 48
     },
     'strategy': 'tpu',
     'mode': 'gcp',
     'tpu_name': 'deeplab-articles',
-    'num_classes': 18,
+    'num_classes': 2,
     'backbone': 'resnet50',
     'initial_learning_rate': 5e-4,
     'end_learning_rate': 1e-5,
@@ -39,5 +39,5 @@ CONFIG = {
 }
 
 steps_per_epoch = 91599 // CONFIG['train_dataset_config']['batch_size']
-CONFIG['decay_steps'] = steps_per_epoch * 30
+CONFIG['decay_steps'] = steps_per_epoch * 20
 # validation_steps: 7429 // CONFIG['val_dataset_config']['batch_size']
