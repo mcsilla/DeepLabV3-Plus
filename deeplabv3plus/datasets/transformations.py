@@ -1,6 +1,5 @@
 import tensorflow as tf
-import tensorflow_probability as tfp
-import numpy as np
+# import tensorflow_probability as tfp
 
 
 def random_brightness(image, label):
@@ -14,14 +13,6 @@ def random_contrast(image, label):
         [2], minval=0, maxval=10, dtype=tf.dtypes.int32, seed=None, name=None
     )
     return tf.image.stateless_random_contrast(image, lower=0.8, upper=2, seed=seed), label
-
-# def random_crop(image, label):
-#     fraction = np.random.uniform(0.95, 1)
-#     # fraction = tf.random.uniform(
-#     #     [], minval=0.95, maxval=1, dtype=tf.dtypes.float32, seed=None, name=None
-#     # )
-#     return (tf.image.central_crop(image, central_fraction=fraction),
-#             tf.image.central_crop(label, central_fraction=fraction))
 
 def random_crop(image, label):
     rand = tf.random.uniform(
@@ -58,19 +49,19 @@ def make_gray(image, label):
     return tf.image.grayscale_to_rgb(gray_image), label
 
 
-def gaussian_kernel(size: int,
-                    mean: float,
-                    std: float,
-                    ):
-    d = tfp.distributions.Normal(loc=mean, scale=std)
-
-    vals = d.prob(tf.range(start=-size, limit=size + 1, dtype=tf.float32))
-
-    gauss_kernel = tf.einsum('i,j->ij',
-                             vals,
-                             vals)
-
-    return gauss_kernel / tf.reduce_sum(gauss_kernel)
+# def gaussian_kernel(size: int,
+#                     mean: float,
+#                     std: float,
+#                     ):
+#     d = tfp.distributions.Normal(loc=mean, scale=std)
+#
+#     vals = d.prob(tf.range(start=-size, limit=size + 1, dtype=tf.float32))
+#
+#     gauss_kernel = tf.einsum('i,j->ij',
+#                              vals,
+#                              vals)
+#
+#     return gauss_kernel / tf.reduce_sum(gauss_kernel)
 
 
 def mean_kernel(size: int):

@@ -75,7 +75,7 @@ class Trainer:
                     # learning_rate=decay_schedule
                     learning_rate=decay_schedule
                 ),
-                loss=tf.keras.losses.SparseCategoricalCrossentropy(),
+                loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy']
             )
             latest_ckpt = self.continue_running()
