@@ -1,6 +1,5 @@
 import tensorflow as tf
-import tensorflow_probability as tfp
-import numpy as np
+# import tensorflow_probability as tfp
 
 
 def random_brightness(image, label):
