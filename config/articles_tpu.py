@@ -6,10 +6,10 @@ from glob import glob
 from pathlib import Path
 import tensorflow as tf
 
-tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-train/*'
-tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrec-val/*'
-model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_new_1024'
-log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model_new_1024/logs'
+tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/tfrec-train-v2/*'
+tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/tfrec-val-v2/*'
+model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-two-categories-corrected-loss'
+log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-two-categories-corrected-loss/logs'
 
 CONFIG = {
     # We mandate specifying project_name and experiment_name in every config
@@ -26,18 +26,18 @@ CONFIG = {
     },
     'strategy': 'tpu',
     'mode': 'gcp',
-    'tpu_name': 'deeplab-articles',
-    'num_classes': 18,
+    'tpu_name': 'deeplab-articles-2',
+    'num_classes': 2,
     'backbone': 'resnet50',
     'initial_learning_rate': 5e-4,
     'end_learning_rate': 1e-5,
     'checkpoint_dir': model_dir,
     'checkpoint_file_prefix': "ckpt_",
     'log_dir': log_dir,
-    'epochs': 50,
+    'epochs': 30,
     'power': 0.9
 }
 
 steps_per_epoch = 91599 // CONFIG['train_dataset_config']['batch_size']
-CONFIG['decay_steps'] = steps_per_epoch * 30
+CONFIG['decay_steps'] = steps_per_epoch * 20
 # validation_steps: 7429 // CONFIG['val_dataset_config']['batch_size']

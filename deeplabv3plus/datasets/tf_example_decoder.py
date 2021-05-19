@@ -30,6 +30,7 @@ class TfExampleDecoder:
             serialized=serialized_example, features=self._keys_to_features)
         image = self._decode_image(parsed_tensors['image/encoded'], 3)
         label = self._decode_image(parsed_tensors['label/encoded'], 1)
+        label = tf.math.divide(label, tf.constant(255, dtype=tf.uint8))
         image_black = self._decode_image(parsed_tensors['image_black/encoded'], 1)
         image_black = tf.image.grayscale_to_rgb(image_black)
         width = parsed_tensors['image/width']
