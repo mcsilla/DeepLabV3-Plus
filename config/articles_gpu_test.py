@@ -8,7 +8,9 @@ import tensorflow as tf
 
 tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/deeplab/test_records/*train*'
 tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/deeplab/test_records/*val*'
+# ide menti a checkpointokat
 model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model'
+# ide menti a logokat, amiket a tensorboarddal meg lehet jeleníteni
 log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model/logs'
 
 CONFIG = {
@@ -18,14 +20,13 @@ CONFIG = {
     'experiment_name': 'articles-segmentation-resnet-50-backbone',
     'train_dataset_config': {
         'tf_records': tf.io.gfile.glob(tfrec_train_pattern),
-        'height': 768, 'width': 768, 'batch_size': 1
+        'height': 1024, 'width': 1024, 'batch_size': 1
     },
     'val_dataset_config': {
         'tf_records': tf.io.gfile.glob(tfrec_val_pattern),
-        'height': 768, 'width': 768, 'batch_size': 1
+        'height': 1024, 'width': 1024, 'batch_size': 1
     },
     'strategy': 'onedevice',
-    'tpu_name': 'deeplab-articles',
     'num_classes': 18,
     'backbone': 'resnet50',
     'learning_rate': 1e-4,
