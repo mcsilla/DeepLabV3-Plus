@@ -16,7 +16,7 @@ class TfExampleDecoder:
                 tf.io.FixedLenFeature((), tf.int64),
             'image/width':
                 tf.io.FixedLenFeature((), tf.int64),
-            'label/encoded':
+            'label_page_segmentation/encoded':
                 tf.io.FixedLenFeature((), tf.string),
         }
     def _decode_image(self, content, channels):
@@ -29,7 +29,7 @@ class TfExampleDecoder:
         parsed_tensors = tf.io.parse_single_example(
             serialized=serialized_example, features=self._keys_to_features)
         image = self._decode_image(parsed_tensors['image/encoded'], 3)
-        label = self._decode_image(parsed_tensors['label/encoded'], 1)
+        label = self._decode_image(parsed_tensors['label_page_segmentation/encoded'], 1)
         image_black = self._decode_image(parsed_tensors['image_black/encoded'], 1)
         image_black = tf.image.grayscale_to_rgb(image_black)
         width = parsed_tensors['image/width']
