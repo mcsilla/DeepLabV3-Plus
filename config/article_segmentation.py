@@ -26,7 +26,7 @@ CONFIG = {
     },
     'strategy': 'tpu',
     'mode': 'gcp',
-    'tpu_name': 'articles-segmentation',
+    'tpu_name': 'article-segmentation',
     'num_classes': 2,
     'backbone': 'resnet50',
     'initial_learning_rate': 5e-4,
