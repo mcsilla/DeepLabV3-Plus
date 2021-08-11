@@ -72,7 +72,6 @@ class Trainer:
 
             self._model.compile(
                 optimizer=tf.keras.optimizers.Adam(
-                    # learning_rate=decay_schedule
                     learning_rate=decay_schedule
                 ),
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
@@ -205,7 +204,7 @@ class Trainer:
         ]
 
         history = self.model.fit(
-            self.train_dataset, 
+            self.train_dataset,
             validation_data=self.val_dataset,
             # steps_per_epoch=self.config['steps_per_epoch'],
             # validation_steps=self.config['validation_steps'],
