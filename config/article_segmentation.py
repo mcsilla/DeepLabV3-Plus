@@ -38,5 +38,5 @@ CONFIG = {
 
 num_of_train_examples = 143128
 num_of_val_examples = 7005
-steps_per_epoch = num_of_train_example // CONFIG['train_dataset_config']['batch_size']
+steps_per_epoch = num_of_train_examples // CONFIG['train_dataset_config']['batch_size']
 CONFIG['decay_steps'] = steps_per_epoch * 18
