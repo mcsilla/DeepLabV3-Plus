@@ -2,14 +2,12 @@
 
 """Module for training deeplabv3plus on articles."""
 
-from glob import glob
-from pathlib import Path
 import tensorflow as tf
 
-tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrecords-without-encyclopedias-with-validation/train*'
-tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrecords-without-encyclopedias-with-validation/val*'
-model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-without-encyclopedias-with-validation-1024/page-segmentation'
-log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-without-encyclopedias-with-validation-1024/page-segmentation/logs'
+tfrec_train_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrecords-all-with-random-validation/train*'
+tfrec_val_pattern = 'gs://arcanum-ml/cv/articles/deeplab/tfrecords-all-with-random-validation/val*'
+model_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-all-with-random-validation/page-segmentation'
+log_dir = 'gs://arcanum-ml/cv/articles/deeplab/model-all-with-random-validation/page-segmentation/logs'
 
 CONFIG = {
     # We mandate specifying project_name and experiment_name in every config
@@ -38,6 +36,7 @@ CONFIG = {
     'power': 0.9
 }
 
-steps_per_epoch = 133705 // CONFIG['train_dataset_config']['batch_size']
-CONFIG['decay_steps'] = steps_per_epoch * 20
-# validation_steps: 7429 // CONFIG['val_dataset_config']['batch_size']
+num_of_train_examples = 143128
+num_of_val_examples = 7005
+steps_per_epoch = num_of_train_examples // CONFIG['train_dataset_config']['batch_size']
+CONFIG['decay_steps'] = steps_per_epoch * 18
