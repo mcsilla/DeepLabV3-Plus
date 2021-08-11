@@ -194,9 +194,9 @@ class Trainer:
                 filepath=self._get_checkpoint_filename_format(),
                 monitor='val_loss',
                 # save_best_only=True,
-                mode='min',
+                # mode='min',
                 # save_weights_only=True,
-                save_freq=1000,
+                # save_freq=1000,
             ),
 
             self._get_logger_callback(),
@@ -204,14 +204,12 @@ class Trainer:
         ]
 
         history = self.model.fit(
-            self.train_dataset, validation_data=self.val_dataset,
-
+            self.train_dataset,
+            validation_data=self.val_dataset,
             # steps_per_epoch=self.config['steps_per_epoch'],
-
             # validation_steps=self.config['validation_steps'],
-
-            epochs=self.config['epochs'], callbacks=callbacks,
-
+            epochs=self.config['epochs'],
+            callbacks=callbacks,
             initial_epoch=self.initial_epoch
         )
 
